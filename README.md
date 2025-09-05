@@ -1,190 +1,250 @@
-# 📊 E-Commerce Sales Analysis (SQL + Power BI)
+# Power BI & SQL Sales Analysis Project
 
-## 📌 Project Overview
-This project analyzes **E-commerce sales data** using **SQL** for querying and **Power BI** for visualization.  
-The goal is to identify key sales trends, customer insights, and profitability metrics that can help improve decision-making.
+## 📊 Project Overview
+This project leverages **SQL queries** for comprehensive sales analysis and visualizes insights using **Power BI dashboards**. It focuses on evaluating performance across **categories, sub-categories, payment methods, cities, states, and customer segments**.
+
+The project is structured into five key sections:
+1. Category Analysis
+2. Sub-Category Analysis
+3. Payment Mode Analysis
+4. City & State Analysis
+5. Joined/Combined Analysis (Profit, Sales, Customers)
+
+## 📂 Dataset Description
+- **Orders Table:** Order ID, Customer Name, City, State, Order Date
+- **Details Table:** Order ID, Category, Sub-Category, Quantity, Amount, Profit, Payment Mode
+
+Tables are linked using `Order ID` for combined analysis.
+
+## ⚙️ Tools Used
+- **SQL** – Data extraction and aggregation
+- **Power BI** – Data visualization and reporting
+- **GitHub** – Version control and documentation
 
 ---
 
-## 🛠 Tech Stack
-- **SQL (MySQL/PostgreSQL/SQL Server)** → Data exploration, aggregation, joins, and business queries  
-- **Power BI** → Interactive dashboard with KPIs, charts, and filters  
-
----
-
-## 🗄 Database Details
-The project uses two main tables:  
-
-- **`details`** → Transaction details  
-  - Columns: Order ID, Category, Sub-Category, Amount, Quantity, Profit, Payment Mode  
-- **`orders`** → Customer orders  
-  - Columns: Order ID, CustomerName, State, City  
-
----
-
-## 🧑‍💻 SQL Analysis
-Key queries written in SQL include:  
-
-- **Basic Counts**
+## 🔎 Part 1: Category Analysis
+### SQL Queries
 ```sql
-SELECT COUNT(*) FROM details;
-SELECT COUNT(*) FROM orders;
-
--- Create database
-CREATE DATABASE Sales_db;
-USE Sales_db;
-
--- View all data
-SELECT * FROM details;
-SELECT * FROM orders;
-
--- Count records
-SELECT COUNT(*) FROM details;
-SELECT COUNT(*) FROM orders;
-
--- Distinct categories
-SELECT DISTINCT Category FROM details;
-SELECT COUNT(DISTINCT Category) AS total_category FROM details;
-
--- Sales by category
-SELECT Category, COUNT(*) AS Total_sales
+-- Calculate Total Sales Amount by Category
+SELECT Category, SUM(Amount) AS Total_Amount
 FROM details
 GROUP BY Category;
 
--- Total Amount
-SELECT SUM(Amount) AS total_of_Amount FROM details;
-
--- Total Quantity
-SELECT SUM(Quantity) AS Sum_of_Quantity FROM details;
-
--- Total Profit
-SELECT SUM(Profit) AS Sum_of_Profit FROM details;
-
--- Amount by Category
-SELECT Category, SUM(Amount) AS total_amount
+-- Calculate Total Quantity Sold by Category
+SELECT Category, SUM(Quantity) AS Total_Quantity
 FROM details
-GROUP BY Category
-ORDER BY total_amount DESC;
+GROUP BY Category;
 
--- Profit by Category
-SELECT Category, SUM(Profit) AS total_profit
+-- Calculate Total Profit by Category
+SELECT Category, SUM(Profit) AS Total_Profit
 FROM details
-GROUP BY Category
-ORDER BY total_profit DESC;
+GROUP BY Category;
 
--- Quantity by Category
-SELECT Category, SUM(Quantity) AS total_quantity
+-- Count Total Orders by Category
+SELECT Category, COUNT(DISTINCT [Order ID]) AS Total_Orders
 FROM details
-GROUP BY Category
-ORDER BY total_quantity DESC;
+GROUP BY Category;
+```
+### Insights & Business Implications
+- **Electronics**: Highest revenue contributor, suggesting a strong market demand.  
+- **Clothing**: Largest number of units sold and orders; indicates high customer preference.  
+- **Furniture**: Lowest performance; requires targeted marketing and promotions.  
+- **Action Points**: Optimize Electronics supply chain, strengthen customer loyalty in Clothing, and develop cross-selling strategies for Furniture.
 
--- Distinct Sub-Category
-SELECT DISTINCT `Sub-Category` FROM details;
-SELECT COUNT(DISTINCT `Sub-Category`) AS total_sub_category FROM details;
+---
 
--- Amount by Sub-Category (Top 5)
-SELECT `Sub-Category`, SUM(Amount) AS total_amount
+## 🔎 Part 2: Sub-Category Analysis
+### SQL Queries
+```sql
+-- List all unique Sub-Categories
+SELECT DISTINCT Sub-Category FROM details;
+
+-- Count total Sub-Categories
+SELECT COUNT(DISTINCT Sub-Category) AS total_sub_category FROM details;
+
+-- Top 5 Sub-Categories by Quantity Sold
+SELECT Sub-Category, SUM(Quantity) AS Total_Quantity
 FROM details
-GROUP BY `Sub-Category`
-ORDER BY total_amount DESC
+GROUP BY Sub-Category
+ORDER BY SUM(Quantity) DESC
 LIMIT 5;
 
--- Average Amount per Sub-Category
-SELECT `Sub-Category`, AVG(Amount) AS Average_amount
+-- Top 5 Sub-Categories by Sales Amount
+SELECT Sub-Category, SUM(Amount) AS Total_Amount
 FROM details
-GROUP BY `Sub-Category`
-ORDER BY Average_amount DESC;
-
--- Profit by Sub-Category (Top 5)
-SELECT `Sub-Category`, SUM(Profit) AS total_profit
-FROM details
-GROUP BY `Sub-Category`
-ORDER BY total_profit DESC
+GROUP BY Sub-Category
+ORDER BY SUM(Amount) DESC
 LIMIT 5;
 
--- Quantity by Sub-Category (Top 5)
-SELECT `Sub-Category`, SUM(Quantity) AS total_quantity
+-- Top 5 Sub-Categories by Profit
+SELECT Sub-Category, SUM(Profit) AS Total_Profit
 FROM details
-GROUP BY `Sub-Category`
-ORDER BY total_quantity DESC
+GROUP BY Sub-Category
+ORDER BY SUM(Profit) DESC
 LIMIT 5;
+```
+### Insights & Business Implications
+- High-volume sub-categories: **Saree, Handkerchief, Stole** – opportunities for promotions and bundling.  
+- High-profit sub-categories: **Printers, Bookcases** – focus on premium product marketing.  
+- **Strategy**: Balance high-volume and high-margin products, optimize inventory, and enhance cross-category sales.
 
--- Payment Modes
+---
+
+## 🔎 Part 3: Payment Mode Analysis
+### SQL Queries
+```sql
+-- List all payment modes
 SELECT DISTINCT PaymentMode FROM details;
+
+-- Count distinct payment modes
 SELECT COUNT(DISTINCT PaymentMode) AS distinct_paymentmode FROM details;
 
--- Most used payment modes
-SELECT PaymentMode, COUNT(*) AS total_use
+-- Total Quantity Sold per Payment Mode
+SELECT PaymentMode, SUM(Quantity) AS Total_Quantity
+FROM details
+GROUP BY PaymentMode;
+
+-- Total Transactions per Payment Mode
+SELECT PaymentMode, COUNT(*) AS Total_Transactions
 FROM details
 GROUP BY PaymentMode
-ORDER BY total_use DESC;
+ORDER BY COUNT(*) DESC;
 
--- Transactions by Category & PaymentMode
-SELECT Category, PaymentMode, COUNT(*) AS total_use
+-- Category-wise Payment Mode Distribution
+SELECT Category, PaymentMode, COUNT(*) AS Transactions
 FROM details
 GROUP BY Category, PaymentMode
-ORDER BY total_use DESC;
+ORDER BY COUNT(*) DESC;
 
--- Distinct Customers, States, Cities
+-- Top 2 Sub-Categories per Category by Sales Amount
+SELECT * FROM (
+  SELECT Category, Sub-Category, SUM(Amount) AS Total_Amount,
+         DENSE_RANK() OVER (PARTITION BY Category ORDER BY SUM(Amount) DESC) AS Rank
+  FROM details
+  GROUP BY Category, Sub-Category
+) t
+WHERE Rank <= 2;
+```
+### Insights & Business Implications
+- **COD** dominates transactions and quantity sold.  
+- **UPI & Debit Card** show growing digital adoption.  
+- **EMI** is used selectively for high-value purchases.  
+- **Action Points**: Improve COD logistics, encourage digital payment adoption, and market EMI options for premium products.
+
+---
+
+## 🔎 Part 4: City & State Analysis
+### SQL Queries
+```sql
+-- Count of unique customers
 SELECT COUNT(DISTINCT CustomerName) FROM orders;
+
+-- List all unique states
+SELECT DISTINCT State FROM orders;
+
+-- Count of distinct states
 SELECT COUNT(DISTINCT State) FROM orders;
+
+-- List all unique cities
+SELECT DISTINCT City FROM orders;
+
+-- Count of distinct cities
 SELECT COUNT(DISTINCT City) FROM orders;
 
--- Top 5 States by customers
-SELECT State, COUNT(CustomerName) AS Total_customer
-FROM orders
-GROUP BY State
-ORDER BY Total_customer DESC
-LIMIT 5;
-
--- Top 5 Cities by customers
-SELECT City, COUNT(CustomerName) AS Total_customer
+-- Top 5 Cities by Total Orders
+SELECT City, COUNT(*) AS Total_Orders_Per_City
 FROM orders
 GROUP BY City
-ORDER BY Total_customer DESC
+ORDER BY COUNT(*) DESC
 LIMIT 5;
 
--- Top 5 States by Amount
-SELECT o.State, SUM(d.Amount) AS total_amount
-FROM details d
-JOIN orders o ON d.`Order ID` = o.`Order ID`
-GROUP BY o.State
-ORDER BY total_amount DESC
+-- Top 5 States by Total Orders
+SELECT State, COUNT(*) AS Total_Orders_Per_State
+FROM orders
+GROUP BY State
+ORDER BY COUNT(*) DESC
 LIMIT 5;
+```
+### Insights & Business Implications
+- 336 unique customers across 25 cities and 19 states.  
+- High-order states: **Maharashtra, Madhya Pradesh** – key for inventory planning and marketing focus.  
+- **Action Points**: Allocate resources strategically to top-performing regions and plan city-level promotional campaigns.
 
--- Top 5 Cities by Amount
-SELECT o.City, SUM(d.Amount) AS total_amount
+---
+
+## 🔎 Part 5: Joined/Combined Analysis
+### SQL Queries
+```sql
+-- Monthly Profit Analysis
+SELECT MONTH(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')) AS Month_Number,
+       MONTHNAME(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')) AS Month_Name,
+       SUM(d.Profit) AS Total_Profit
+FROM orders o
+INNER JOIN details d ON o.`Order ID` = d.`Order ID`
+GROUP BY MONTH(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')),
+         MONTHNAME(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y'))
+ORDER BY Month_Number;
+
+-- Top 5 Cities by Profit
+SELECT o.City, SUM(d.Profit) AS Total_Profit
 FROM details d
-JOIN orders o ON d.`Order ID` = o.`Order ID`
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
 GROUP BY o.City
-ORDER BY total_amount DESC
+ORDER BY SUM(d.Profit) DESC
 LIMIT 5;
 
--- Top 10 Customers by Amount
-SELECT o.CustomerName, SUM(d.Amount) AS total_amount
+-- Top 5 States by Profit
+SELECT o.State, SUM(d.Profit) AS Total_Profit
 FROM details d
-JOIN orders o ON d.`Order ID` = o.`Order ID`
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.State
+ORDER BY SUM(d.Profit) DESC
+LIMIT 5;
+
+-- Top 10 Customers by Purchase Amount
+SELECT o.CustomerName, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
 GROUP BY o.CustomerName
-ORDER BY total_amount DESC
+ORDER BY SUM(d.Amount) DESC
 LIMIT 10;
 
--- Window Function: Top 2 Sub-Categories by Amount in each Category
-SELECT *
-FROM (
-    SELECT 
-        Category,
-        `Sub-Category`,
-        SUM(Amount) AS total_amount,
-        DENSE_RANK() OVER (PARTITION BY Category ORDER BY SUM(Amount) DESC) AS rnk
-    FROM details
-    GROUP BY Category, `Sub-Category`
-) t
-WHERE rnk <= 2;
+-- Top 5 Cities by Sales Amount
+SELECT o.City, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.City
+ORDER BY SUM(d.Amount) DESC
+LIMIT 5;
 
--- Records per Category & Sub-Category
-SELECT Category, `Sub-Category`, COUNT(*) AS total_records
-FROM details
-GROUP BY Category, `Sub-Category`
-ORDER BY Category;
+-- Top 5 States by Sales Amount
+SELECT o.State, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.State
+ORDER BY SUM(d.Amount) DESC
+LIMIT 5;
+```
+### Insights & Business Implications
+- Profits peak in **November & January**; losses observed in May.  
+- High-profit cities: **Indore, Pune**; high-profit states: **Madhya Pradesh, Maharashtra**.  
+- Top customers: **Harivansh, Madhav** – opportunities for loyalty programs.  
+- **Action Points**: Plan seasonal promotions, implement customer retention strategies, and target resources to high-revenue regions.
+
+---
+
+## 💎 Final Business Conclusion
+- **Electronics**: Revenue backbone.  
+- **Clothing**: Strong customer loyalty and high order frequency.  
+- **Furniture**: Requires targeted strategies to boost performance.  
+- **COD**: Preferred payment mode; digital payments increasing.  
+- **Key Regions**: Maharashtra & Madhya Pradesh.  
+- Seasonal trends and top customers are critical for planning.
+
+## 🚀 Future Recommendations
+- Implement predictive analytics for seasonal demand forecasting.  
+- Develop customer segmentation and churn analysis models.  
+- Enhance Power BI dashboards with interactive and drill-down capabilities.
 
 
