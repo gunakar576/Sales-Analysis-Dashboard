@@ -176,7 +176,34 @@ LIMIT 5;
 ## 🔎 Part 5: Joined/Combined Analysis
 ### SQL Queries
 ```sql
--- Monthly Profit Analysis
+
+-- 1)Top 5 States by Sales Amount
+SELECT o.State, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.State
+ORDER BY SUM(d.Amount) DESC
+LIMIT 5;
+
+
+-- 2)Top 5 Cities by Sales Amount
+SELECT o.City, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.City
+ORDER BY SUM(d.Amount) DESC
+LIMIT 5;
+
+-- 3)Top 10 Customers by Purchase Amount
+SELECT o.CustomerName, SUM(d.Amount) AS Total_Amount
+FROM details d
+RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
+GROUP BY o.CustomerName
+ORDER BY SUM(d.Amount) DESC
+LIMIT 10;
+
+
+-- 4)Monthly Profit Analysis
 SELECT MONTH(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')) AS Month_Number,
        MONTHNAME(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')) AS Month_Name,
        SUM(d.Profit) AS Total_Profit
@@ -186,15 +213,8 @@ GROUP BY MONTH(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y')),
          MONTHNAME(STR_TO_DATE(o.`Order Date`, '%d-%m-%Y'))
 ORDER BY Month_Number;
 
--- Top 5 Cities by Profit
-SELECT o.City, SUM(d.Profit) AS Total_Profit
-FROM details d
-RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
-GROUP BY o.City
-ORDER BY SUM(d.Profit) DESC
-LIMIT 5;
 
--- Top 5 States by Profit
+-- 5)Top 5 States by Profit
 SELECT o.State, SUM(d.Profit) AS Total_Profit
 FROM details d
 RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
@@ -202,29 +222,18 @@ GROUP BY o.State
 ORDER BY SUM(d.Profit) DESC
 LIMIT 5;
 
--- Top 10 Customers by Purchase Amount
-SELECT o.CustomerName, SUM(d.Amount) AS Total_Amount
-FROM details d
-RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
-GROUP BY o.CustomerName
-ORDER BY SUM(d.Amount) DESC
-LIMIT 10;
-
--- Top 5 Cities by Sales Amount
-SELECT o.City, SUM(d.Amount) AS Total_Amount
+-- 6)Top 5 Cities by Profit
+SELECT o.City, SUM(d.Profit) AS Total_Profit
 FROM details d
 RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
 GROUP BY o.City
-ORDER BY SUM(d.Amount) DESC
+ORDER BY SUM(d.Profit) DESC
 LIMIT 5;
 
--- Top 5 States by Sales Amount
-SELECT o.State, SUM(d.Amount) AS Total_Amount
-FROM details d
-RIGHT JOIN orders o ON d.`Order ID` = o.`Order ID`
-GROUP BY o.State
-ORDER BY SUM(d.Amount) DESC
-LIMIT 5;
+
+
+
+
 ```
 ### Insights & Business Implications
 - Profits peak in **November & January**; losses observed in May.  
