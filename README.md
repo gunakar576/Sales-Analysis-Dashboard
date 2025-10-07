@@ -1,4 +1,4 @@
-#Sales Analysis Dashboard using  Power BI & SQL
+# Sales Analysis Dashboard using  Power BI & SQL
 
 ## 📊 Project Overview
 This project leverages **SQL queries** for comprehensive sales analysis and visualizes insights using **Power BI dashboards**. It focuses on evaluating performance across **categories, sub-categories, payment methods, cities, states, and customer segments**.
