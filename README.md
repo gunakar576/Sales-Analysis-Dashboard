@@ -94,30 +94,30 @@ LIMIT 5;
 ## 🔎 Part 3: Payment Mode Analysis
 ### SQL Queries
 ```sql
--- List all payment modes
+-- 1)List all payment modes
 SELECT DISTINCT PaymentMode FROM details;
 
--- Count distinct payment modes
+-- 2)Count distinct payment modes
 SELECT COUNT(DISTINCT PaymentMode) AS distinct_paymentmode FROM details;
 
--- Total Quantity Sold per Payment Mode
+-- 3)Total Quantity Sold per Payment Mode
 SELECT PaymentMode, SUM(Quantity) AS Total_Quantity
 FROM details
 GROUP BY PaymentMode;
 
--- Total Transactions per Payment Mode
+-- 4)Total Transactions per Payment Mode
 SELECT PaymentMode, COUNT(*) AS Total_Transactions
 FROM details
 GROUP BY PaymentMode
 ORDER BY COUNT(*) DESC;
 
--- Category-wise Payment Mode Distribution
+-- 5)Category-wise Payment Mode Distribution
 SELECT Category, PaymentMode, COUNT(*) AS Transactions
 FROM details
 GROUP BY Category, PaymentMode
 ORDER BY COUNT(*) DESC;
 
--- Top 2 Sub-Categories per Category by Sales Amount
+-- 6)Top 2 Sub-Categories per Category by Sales Amount
 SELECT * FROM (
   SELECT Category, Sub-Category, SUM(Amount) AS Total_Amount,
          DENSE_RANK() OVER (PARTITION BY Category ORDER BY SUM(Amount) DESC) AS Rank
