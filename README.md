@@ -251,9 +251,6 @@ LIMIT 5;
 - **Key Regions**: Maharashtra & Madhya Pradesh.  
 - Seasonal trends and top customers are critical for planning.
 
-## 🚀 Future Recommendations
-- Implement predictive analytics for seasonal demand forecasting.  
-- Develop customer segmentation and churn analysis models.  
-- Enhance Power BI dashboards with interactive and drill-down capabilities.
+
 
 
